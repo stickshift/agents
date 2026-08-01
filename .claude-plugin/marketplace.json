@@ -1,0 +1,13 @@
+{
+  "name": "agents",
+  "description": "Custom directory of agent guidance",
+  "owner": {
+    "name": "Andrew Young"
+  },
+  "plugins": [
+    {
+      "name": "stickshift",
+      "source": "./plugins/stickshift"
+    }
+  ]
+}

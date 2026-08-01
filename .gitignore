@@ -1,0 +1,20 @@
+# Outputs
+build/
+dist/
+.env
+.venv
+
+# nx
+.nx
+
+# Javascript
+node_modules
+
+# Generated
+.astro/
+.ipynb_checkpoints
+__pycache__
+.ruff_cache
+
+# System
+.DS_Store

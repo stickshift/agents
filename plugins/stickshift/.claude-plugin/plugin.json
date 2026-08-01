@@ -1,0 +1,8 @@
+{
+  "name": "stickshift",
+  "description": "Custom library of agent guidance",
+  "author": {
+    "name": "Andrew Young"
+  },
+  "category": "development"
+}
