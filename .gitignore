@@ -15,6 +15,7 @@ node_modules
 .ipynb_checkpoints
 __pycache__
 .ruff_cache
+.pytest_cache
 
 # System
 .DS_Store

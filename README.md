@@ -2,9 +2,20 @@
 
 Custom directory of claude plugins.
 
+## Getting Started
+
+### Setup Development Environment
+
+```shell
+# Install all tools, deps, and activate envs
+source environment.sh
+```
+
 ## Install Plugins
 
 ### GitHub
+
+Install stickshift plugins directly from github.
 
 ```shell
 /plugins marketplace add stickshift/agents
@@ -12,6 +23,8 @@ Custom directory of claude plugins.
 ```
 
 ### Local Repository
+
+Install stickshift plugins from local clone.
 
 ```shell
 # Path to local repo clone

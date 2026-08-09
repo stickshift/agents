@@ -2,9 +2,11 @@
 
 # Parameters - overridable
 VERSION=${VERSION:-0.0.0}
+PYTEST_ADDOPTS=${PYTEST_ADDOPTS:-"-s -n auto -m 'not wip'"}
 
 # Settings - non-overridable
 WORKSPACE_PATH=$PWD
+PYDEVD_DISABLE_FILE_VALIDATION=1
 
 # Telemetry
 CLAUDE_CODE_ENABLE_TELEMETRY=1
@@ -24,6 +26,36 @@ OTEL_SEMCONV_STABILITY_OPT_IN="http"
 # Reproducible builds: hardcode SOURCE_DATE_EPOCH to midnight 2025-01-01 (1735689600)
 SOURCE_DATE_EPOCH=1735689600
 
+# Bootstrap toolchain (mise) - conditional, so a fresh worktree needs only
+# `source environment.sh`. Warm path is a checksum compare, ~0 cost.
+if command -v mise >/dev/null 2>&1; then
+  # New worktree = new config path; trust it so install/env don't prompt.
+  mise trust -q 2>/dev/null || true
+
+  mkdir -p build
+  mise_stamp=build/.bootstrap-mise
+  mise_sum=$( (shasum -a 256 mise.toml 2>/dev/null || sha256sum mise.toml) | cut -d' ' -f1)
+  if [[ "$mise_sum" != "$(cat $mise_stamp 2>/dev/null)" ]]; then
+    mise install && echo "$mise_sum" > $mise_stamp
+  fi
+
+  # Put the pinned tools on PATH for this shell even without `mise activate`
+  # in the user's rc (scripts, CI, teammates who haven't set it up).
+  eval "$(mise env -s bash)"
+else
+  echo "WARN: mise not found - install it (brew install mise) to get pinned tool versions" >&2
+fi
+
+# JS dependencies - npm ci only when the lockfile is newer than the last
+# install (npm writes node_modules/.package-lock.json on every ci/install).
+if [[ ! -f node_modules/.package-lock.json || package-lock.json -nt node_modules/.package-lock.json ]]; then
+  npm ci
+fi
+
+# Local JS binaries (nx et al) directly on PATH, so `nx check` works bare -
+# no npx prefix, no alias, same short form locally and in CI.
+[[ ":$PATH:" != *":$WORKSPACE_PATH/node_modules/.bin:"* ]] && PATH="$WORKSPACE_PATH/node_modules/.bin:$PATH"
+
 # Export variables to temporary .env
 tmp_project_env=$(mktemp)
 
@@ -41,6 +73,8 @@ project_variables=(
   OTEL_EXPORTER_OTLP_PROTOCOL
   OTEL_EXPORTER_OTLP_LOGS_INSECURE
   OTEL_SEMCONV_STABILITY_OPT_IN
+  PYDEVD_DISABLE_FILE_VALIDATION
+  PYTEST_ADDOPTS
   SOURCE_DATE_EPOCH
   VERSION
   WORKSPACE_PATH
@@ -90,6 +124,18 @@ if [[ -n $GITHUB_ENV ]]; then
     v=$(echo $v | sed -E 's/^"|"$//g')
     printf '%s<<EOF\n%s\nEOF\n' "$k" "$v" >> "$GITHUB_ENV"
   done
+fi
+
+# Local env tuning
+if [[ $CI != "true" ]]; then
+
+  # Install deps
+  if ! [[ -f ${WORKSPACE_PATH}/.venv/bin/activate ]]; then
+    uv sync --all-packages
+  fi
+
+  # Activate python venv
+  source ${WORKSPACE_PATH}/.venv/bin/activate
 fi
 
 # Sourcing this file succeeds unless a real bootstrap step failed above.

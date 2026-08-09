@@ -1,0 +1,62 @@
+{
+  "name": "@stickshift/workspace",
+  "version": "0.0.0",
+  "author": "Andrew Young (https://stickshift.github.io/)",
+  "scripts": {
+    "typecheck": "tsc -b",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage",
+    "check:docs": "node tools/check-doc-examples.mjs",
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm run check:docs && npm test"
+  },
+  "private": true,
+  "type": "module",
+  "packageManager": "npm@11.17.0",
+  "engines": {
+    "node": ">=26"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
+    "@tsconfig/node-ts": "^23.6.4",
+    "@tsconfig/node26": "^26.0.0",
+    "@types/node": "^26.1.1",
+    "@vitest/coverage-v8": "^4.1.10",
+    "eslint": "^10.8.0",
+    "eslint-config-prettier": "^10.1.8",
+    "jsonc-eslint-parser": "^3.1.0",
+    "prettier": "^3.9.6",
+    "pyright": "^1.1.411",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.65.0",
+    "vite": "^8.1.5",
+    "vitest": "^4.1.10"
+  },
+  "repository": "github:stickshift/agents",
+  "workspaces": [],
+  "prettier": {
+    "semi": false,
+    "singleQuote": false,
+    "quoteProps": "as-needed",
+    "trailingComma": "all",
+    "printWidth": 100,
+    "tabWidth": 2,
+    "useTabs": false,
+    "arrowParens": "always",
+    "bracketSpacing": true,
+    "endOfLine": "lf",
+    "plugins": [
+      "@trivago/prettier-plugin-sort-imports"
+    ],
+    "importOrder": [
+      "^[^.]",
+      "^\\."
+    ],
+    "importOrderSeparation": true,
+    "importOrderSortSpecifiers": true
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "enableExperimentalFeatures": true,
+
+  "venvPath": ".",
+  "venv": ".venv",
+
+  "typeCheckingMode": "strict",
+
+  "include": ["packages", "plugins/**/references/example"],
+
+  "exclude": ["**/.*", "**/node_modules", "**/__pycache__", "**/.venv"],
+
+  "extraPaths": ["."],
+
+  "executionEnvironments": [
+    {
+      "root": "."
+    }
+  ]
+}

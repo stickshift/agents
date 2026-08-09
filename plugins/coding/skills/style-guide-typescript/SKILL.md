@@ -24,15 +24,15 @@ Six choices produce nearly everything below. Knowing them lets you extrapolate t
 
 **Model with unions, not flags.** A discriminated union makes illegal states unrepresentable; a bag of optional fields makes them merely undocumented.
 
-```ts
+```ts no-check
 // Every combination is possible, most are nonsense.
-type Request = { loading: boolean; data?: User; error?: Error };
+type Request = { loading: boolean; data?: User; error?: Error }
 
 // Three states, exhaustively checkable.
 type Request =
-  | { readonly status: 'loading' }
-  | { readonly status: 'success'; readonly data: User }
-  | { readonly status: 'failure'; readonly error: Error };
+  | { readonly status: "loading" }
+  | { readonly status: "success"; readonly data: User }
+  | { readonly status: "failure"; readonly error: Error }
 ```
 
 Switch on the discriminant and let `switch-exhaustiveness-check` catch the case you forget when a variant is added.
@@ -42,8 +42,8 @@ Switch on the discriminant and let `switch-exhaustiveness-check` catch the case 
 **Never `enum`.** They emit runtime code, so they can't be erased by type-stripping runtimes; numeric enums accept any number, which is unsound. Use a frozen object plus a derived union:
 
 ```ts
-const Role = { admin: 'admin', editor: 'editor', viewer: 'viewer' } as const;
-type Role = (typeof Role)[keyof typeof Role];
+const Role = { admin: "admin", editor: "editor", viewer: "viewer" } as const
+type Role = (typeof Role)[keyof typeof Role]
 ```
 
 The value and the type share a name, `Role.admin` still autocompletes, and the type is a plain string union that works everywhere. `erasableSyntaxOnly` enforces this mechanically.
@@ -59,7 +59,7 @@ The value and the type share a name, `Role.admin` still autocompletes, and the t
 **Keep types readable.** If understanding a type requires mentally evaluating it, replace it with something explicit. Reach for a generic only when a function is genuinely parametric and is called at more than one type; a generic with a single call site is an indirection with no payoff. Branded types are the one piece of type-level machinery worth the cost, and only when mixing up two same-shaped values is plausible:
 
 ```ts
-type UserId = string & { readonly __brand: 'UserId' };
+type UserId = string & { readonly __brand: "UserId" }
 ```
 
 ## Immutability
@@ -99,8 +99,7 @@ Mutation is fine where it can't be observed and harmful where it can. The line i
 
 ```ts
 type Result<T, E = Error> =
-  | { readonly ok: true; readonly value: T }
-  | { readonly ok: false; readonly error: E };
+  { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E }
 ```
 
 That's the whole abstraction. Don't reach for an Effect-style library or build combinators on top of it; the value is the honest signature, not the algebra.
@@ -118,8 +117,8 @@ Every value entering the program from outside — HTTP body, query params, env v
 Derive the TypeScript type from the schema rather than declaring both:
 
 ```ts
-const UserSchema = z.object({ id: z.string(), email: z.string().email() });
-type User = z.infer<typeof UserSchema>;
+const UserSchema = z.object({ id: z.string(), email: z.string().email() })
+type User = z.infer<typeof UserSchema>
 ```
 
 Two hand-maintained definitions of the same shape drift; a derived one can't.

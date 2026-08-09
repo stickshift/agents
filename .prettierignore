@@ -1,0 +1,10 @@
+node_modules
+dist
+build
+.venv
+package-lock.json
+uv.lock
+
+# Skill and plugin docs are hand-formatted: Prettier reflows the tables and
+# reformats the TypeScript samples, which are laid out deliberately.
+*.md

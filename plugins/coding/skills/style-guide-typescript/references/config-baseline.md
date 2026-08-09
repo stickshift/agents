@@ -15,8 +15,8 @@ These are defaults for new projects. Report differences with their practical con
 
 ```json
 {
-  "semi": true,
-  "singleQuote": true,
+  "semi": false,
+  "singleQuote": false,
   "quoteProps": "as-needed",
   "trailingComma": "all",
   "printWidth": 100,
@@ -28,12 +28,15 @@ These are defaults for new projects. Report differences with their practical con
 }
 ```
 
-Only two of these are worth an opinion:
+Three of these are worth an opinion:
 
+- **`semi: false`** rather than Prettier's default. Automatic semicolon insertion is well specified, and Prettier is already the thing deciding where statements end. The genuinely ambiguous cases are lines beginning with `(`, `[`, `` ` ``, `+`, `-` or `/`, and Prettier prefixes exactly those with a leading semicolon on its own — so the hazard the rule guards against never reaches the file. What's left is one less character of line noise. Pair it with ESLint's `no-unexpected-multiline`, which is the check that catches a continuation you didn't mean.
 - **`printWidth: 100`** rather than Prettier's default 80. Type annotations, generics and import lists consume horizontal space that plain JavaScript doesn't, and 80 forces wrapping that hurts more than it helps. If a project uses 80 or 120, leave it — consistency matters more than the number.
 - **`trailingComma: "all"`** keeps diffs to one line when appending to a list or parameter set.
 
-The rest are Prettier's defaults or near enough. `endOfLine: "lf"` avoids CRLF churn on mixed-OS teams; pair it with `* text=auto eol=lf` in `.gitattributes`.
+The rest are Prettier's defaults or near enough, `singleQuote: false` included — double quotes need no escaping in the apostrophe-bearing English that fills error messages and user-facing strings. `endOfLine: "lf"` avoids CRLF churn on mixed-OS teams; pair it with `* text=auto eol=lf` in `.gitattributes`.
+
+Note that `semi` and `singleQuote` are the two settings a project is most likely to have set the other way. Both are pure preference, so a project that has consistently chosen the opposite has chosen fine — match it rather than reformatting.
 
 Formatting is not a lint concern. If the project has ESLint rules for indentation, quotes, semicolons or line length, they're redundant at best and fighting Prettier at worst — `eslint-config-prettier` exists to turn them off and should be last in the config array.
 
@@ -106,9 +109,9 @@ Flat config, type-aware. `strictTypeChecked` is the setting that matters — the
 
 ```js
 // eslint.config.js
-import js from '@eslint/js';
-import tseslint from 'typescript-eslint';
-import prettier from 'eslint-config-prettier';
+import js from "@eslint/js"
+import tseslint from "typescript-eslint"
+import prettier from "eslint-config-prettier"
 
 export default tseslint.config(
   js.configs.recommended,
@@ -119,28 +122,29 @@ export default tseslint.config(
       parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
     },
     rules: {
-      '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
-      '@typescript-eslint/consistent-type-imports': [
-        'error',
-        { prefer: 'type-imports', fixStyle: 'inline-type-imports' },
+      "@typescript-eslint/consistent-type-definitions": ["error", "type"],
+      "@typescript-eslint/consistent-type-imports": [
+        "error",
+        { prefer: "type-imports", fixStyle: "inline-type-imports" },
       ],
-      '@typescript-eslint/switch-exhaustiveness-check': 'error',
-      '@typescript-eslint/prefer-readonly': 'error',
-      '@typescript-eslint/explicit-module-boundary-types': 'error',
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      "@typescript-eslint/switch-exhaustiveness-check": "error",
+      "@typescript-eslint/prefer-readonly": "error",
+      "@typescript-eslint/explicit-module-boundary-types": "error",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
       ],
-      'no-restricted-syntax': [
-        'error',
-        { selector: 'TSEnumDeclaration', message: 'Use an `as const` object and a derived union.' },
+      "no-restricted-syntax": [
+        "error",
+        { selector: "TSEnumDeclaration", message: "Use an `as const` object and a derived union." },
       ],
-      eqeqeq: ['error', 'always'],
-      'no-console': 'warn',
+      eqeqeq: ["error", "always"],
+      "no-console": "warn",
+      "no-unexpected-multiline": "error",
     },
   },
   prettier,
-);
+)
 ```
 
 `prettier` must come last — it disables formatting rules the presets enable, and anything after it can turn them back on.
@@ -160,6 +164,7 @@ Carried by `strictTypeChecked`, so their absence from the `rules` block isn't a 
 - **`explicit-module-boundary-types`** — return types on exported functions. Noisy enough on arrow-heavy React components that `'warn'` is a defensible downgrade there.
 - **`no-restricted-syntax` on `TSEnumDeclaration`** — belt-and-braces with `erasableSyntaxOnly`, and gives a message pointing at the replacement. Drop it if the tsconfig flag is on and TS 5.8+ is guaranteed.
 - **`eqeqeq: 'always'`** — the `== null` idiom exists to catch both null and undefined, and the style guide uses only `undefined`, so there's nothing left for loose equality to do.
+- **`no-unexpected-multiline`** — the counterpart to `semi: false`. `eslint-config-prettier` classifies it as a special rule because it's redundant under `semi: true`; with semicolons off it's the one check standing between you and a line starting with `(` or `[` being swallowed as a continuation of the line above.
 
 ### Deliberately off
 

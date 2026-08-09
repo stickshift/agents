@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    // Examples are snippets, not a buildable project.
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    "noEmit": true,
+
+    // A snippet legitimately declares things it doesn't go on to use.
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+
+    "types": ["node"]
+  },
+  "include": ["*.ts", "*.d.ts"]
+}
