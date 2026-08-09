@@ -1,0 +1,8 @@
+{
+  "name": "dual-track",
+  "description": "Agents trained to build products using Patton and Cagan's dual-track development framework.",
+  "author": {
+    "name": "Andrew Young"
+  },
+  "category": "development"
+}

@@ -1,0 +1,57 @@
+{
+  "skill_name": "style-guide-typescript",
+  "evals": [
+    {
+      "id": 0,
+      "name": "greenfield-billing-module",
+      "prompt": "I'm starting a new TS package for our billing service. Write me src/subscriptions.ts \u2014 it needs to fetch a subscription from our billing API (GET /v1/subscriptions/:id, returns JSON with id, customer_id, plan, status, current_period_end as an ISO string, and canceled_at which is null unless the sub was canceled), turn that into something the rest of the app can actually work with, and expose a function that tells me whether a subscription is currently active. The API is flaky so callers need a way to deal with it failing.",
+      "assertions": [
+        "Validates the API response at runtime (schema library or hand-written type guard) instead of casting the parsed JSON",
+        "Converts canceled_at: null to undefined so null does not leak past the boundary",
+        "Models subscription status as a string-literal union or `as const` object, not a TypeScript enum",
+        "Keeps the snake_case wire shape distinct from the camelCase domain type",
+        "Domain type properties are declared readonly",
+        "Expresses fetch/parse failure in the return type (Result-style discriminated union), not only by throwing",
+        "Exported functions carry explicit return type annotations",
+        "Contains no `any` and no `as` assertion used to launder the API response",
+        "Declares object shapes with `type` rather than `interface`"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "feature-flag-module",
+      "prompt": "need a feature flags module, src/flags.ts. flags get loaded from a flags.json at boot. each flag is either on/off for everyone, or a percentage rollout bucketed on user id, or an allowlist of specific user ids. need an isEnabled(flag, user) that tells me whether it's on. and we need to be able to override a flag at runtime in tests without touching the json.",
+      "assertions": [
+        "Models the three rule kinds as a discriminated union, not a TypeScript enum",
+        "Validates the loaded flags.json at runtime rather than casting the parsed JSON",
+        "Handles test overrides without mutable module-level state (override passed in, or a new store returned)",
+        "Avoids a class holding mutable state; uses functions over plain data",
+        "Contains no `any`",
+        "Properties and arrays are readonly (readonly T[] for the allowlist)",
+        "Exported functions carry explicit return type annotations",
+        "Handles the rule-kind union exhaustively",
+        "Surfaces load/parse failure in the return type or as a typed Error rather than silently defaulting",
+        "Declares object shapes with `type` rather than `interface`"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "config-audit",
+      "prompt": "can you look over the tooling config in this repo before we onboard two more devs onto it \u2014 want to know if anything's set up wrong or is going to bite us later. tsconfig, eslint, prettier. don't change anything yet, just tell me what you find.",
+      "assertions": [
+        "Flags strictNullChecks:false in tsconfig.json overriding the strict:true inherited from tsconfig.base.json (requires following the extends chain)",
+        "Flags that ESLint is not type-aware - no parserOptions.projectService/project and only tseslint.configs.recommended - so type-aware rules never run",
+        "Flags that eslint-config-prettier is not last in the array, leaving the formatting rules after it active",
+        "Flags the indent/quotes/semi/max-len rules as duplicating Prettier",
+        "Flags @typescript-eslint/no-explicit-any being turned off, ideally tying it to `body: any` in src/orders.ts",
+        "Recommends noUncheckedIndexedAccess, ideally tying it to firstItem() throwing on an empty array",
+        "Notes the enum in orders.ts and/or recommends erasableSyntaxOnly",
+        "Notes that summarize() mutates the caller's array via in-place sort()",
+        "Treats the Prettier settings (tabWidth 4, printWidth 80, double quotes) as consistency-level choices rather than defects",
+        "Left every file under inputs/ unmodified, as the user asked",
+        "INTERACTION DEFECT: catches that max-len:80 (a hard error) and printWidth:80 (a soft preference) cannot both be satisfied on an unbreakable long line",
+        "ABSENCE DEFECT: notes at least one thing missing entirely - engines/packageManager, .editorconfig, .gitignore for dist/, or CI running tsc --noEmit"
+      ]
+    }
+  ]
+}

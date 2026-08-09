@@ -1,13 +1,17 @@
 {
-  "name": "agents",
+  "name": "stickshift",
   "description": "Custom directory of agent guidance",
   "owner": {
     "name": "Andrew Young"
   },
   "plugins": [
     {
-      "name": "stickshift",
-      "source": "./plugins/stickshift"
+      "name": "coding",
+      "source": "./plugins/coding"
+    },
+    {
+      "name": "dual-track",
+      "source": "./plugins/dual-track"
     }
   ]
 }
