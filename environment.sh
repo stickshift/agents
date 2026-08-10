@@ -52,7 +52,7 @@ if [[ ! -f node_modules/.package-lock.json || package-lock.json -nt node_modules
   npm ci
 fi
 
-# Local JS binaries (nx et al) directly on PATH, so `nx check` works bare -
+# Local JS binaries (vitest et al) directly on PATH, so they work bare -
 # no npx prefix, no alias, same short form locally and in CI.
 [[ ":$PATH:" != *":$WORKSPACE_PATH/node_modules/.bin:"* ]] && PATH="$WORKSPACE_PATH/node_modules/.bin:$PATH"
 
@@ -105,12 +105,7 @@ fi
 # Reload and export variables from .env
 set -a; source .env; set +a
 
-# Persist PATH additions for subsequent CI steps (a step's own PATH edits die
-# with its shell; GITHUB_PATH is how they carry forward). .venv/bin is included
-# because nx recipes invoke bare `dk` (correct for consuming repos, where dk
-# ships on the bundle's PATH); in this repo dk is the venv's console script,
-# and CI never activates the venv - the dir may not exist yet when this line
-# runs (deps install later), which GITHUB_PATH tolerates.
+# Persist PATH additions for subsequent CI steps
 if [[ -n $GITHUB_PATH ]]; then
   echo "$WORKSPACE_PATH/node_modules/.bin" >> "$GITHUB_PATH"
   echo "$WORKSPACE_PATH/.venv/bin" >> "$GITHUB_PATH"
