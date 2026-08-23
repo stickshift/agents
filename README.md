@@ -31,8 +31,15 @@ Install stickshift plugins from local clone.
 SS_AGENTS_HOME=...
 ```
 
+Configure cli opts.
+
 ```shell
-# Configure cli opts
+# Basic coding
+CLAUDE_OPTS=(
+  --plugin-dir "${SS_AGENTS_HOME}/plugins/coding"
+)
+
+# Dual-track
 CLAUDE_OPTS=(
   --plugin-dir "${SS_AGENTS_HOME}/plugins/dual-track"
   --agent dual-track:tech-lead
