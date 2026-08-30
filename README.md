@@ -16,8 +16,8 @@ Install stickshift plugins directly from github.
 # Add stickshift marketplace
 /plugins marketplace add stickshift/agents
 
-# Enable plugin
-/plugins enable {plugin_name}@stickshift
+# Install plugin
+/plugins install {plugin_name}@stickshift
 ```
 
 ### Local Repository
